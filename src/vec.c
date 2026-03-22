@@ -9,7 +9,15 @@ matrix mcreate(int i, int j){
     if (mat.data == NULL){ return (matrix){0, 0, NULL};}
     return mat;
 }
+//initialization of vectors
+vector vcreate(int j){
+    matrix mat = mcreate(1,j);
+    if (mat.data == NULL){ return (vector){0, NULL}; }
+    return (vector){mat.n, mat.data};
+}
 
+void mfree(matrix *m){ free(m->data); m->data = NULL; m->m = m->n = 0; }
+void vfree(vector *v){ free(v->data); v->data = NULL; v->n = 0; }
 //matrix multiplicaiton
 int matmult(matrix *result, const matrix *a, const matrix *b){
     //first, some flags to avoid errors due to the size of matrices
@@ -28,16 +36,39 @@ int matmult(matrix *result, const matrix *a, const matrix *b){
     return 0;
 }
 
-//initialization of vectors
-vector vcreate(int j){
-    matrix mat = mcreate(1,j);
-    if (mat.data == NULL){ return (vector){0, NULL}; }
-    return (vector){mat.n, mat.data};
+int madd(matrix *result, const matrix *a, const matrix *b){
+    if (a->m != b->m || a->n != b->n || result->m != a->m || result->n != a->n){ return -1;}
+    for (int i = 0; i < result->m * result->n; i++){
+        result->data[i] = a->data[i] + b->data[i];
+    } return 0;
 }
 
-void mfree(matrix *m){ free(m->data); m->data = NULL; m->m = m->n = 0; }
-void vfree(vector *v){ free(v->data); v->data = NULL; v->n = 0; }
+int msubs(matrix *result, const matrix *a, const matrix *b){
+    if (a->m != b->m || a->n != b->n || result->m != a->m || result->n != a->n){ return -1;}
+    for (int i = 0; i < result->m * result->n; i++){
+        result->data[i] = a->data[i] - b->data[i];
+    } return 0;
+}
+int matscalarmult(matrix *result, const matrix *a, double scalar){
+    if (a->data == NULL || result->m != a->m || result->n != a->n){ return -1;}
+    for (int i = 0; i < result->m * result->n; i++){
+        result->data[i] = a->data[i] * scalar;
+    } return 0;
+}
 
+int transmat(matrix *transpose, const matrix *mat){
+    if (transpose->m != mat->n || transpose->n != mat->m){
+        mfree(transpose);
+        transpose->m = mat->n; transpose->n = mat->m;
+        transpose->data = malloc(mat->n * mat->m * sizeof(double));
+        if (transpose->data == NULL){ return -1; }
+    }
+    for (int i = 0; i < transpose->m; i++){
+        for (int j = 0; j < transpose->n; j++){
+            transpose->data[i * transpose->n + j] = mat->data[j * mat->n + i];
+        }
+    } return 0;
+}
 
 int matrow(vector *v, const matrix *a, int row){
     if (a->data == NULL || row < 0 || row >= a->m){return -1;}

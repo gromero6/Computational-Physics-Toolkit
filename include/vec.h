@@ -17,6 +17,7 @@ typedef struct {
 
 
 int vadd(vector *result, const vector *a, const vector *b);
+int matscalarmult(matrix *result, const matrix *a, double scalar);
 int vsubs(vector *result, const vector *a, const vector *b);
 void mfree(matrix *m); void vfree(vector *v);
 int matmult(matrix *result, const matrix *a, const matrix *b);
@@ -24,6 +25,9 @@ int cross(vector *result, const vector *a, const vector *b);
 int dot(double *dt, const vector *a, const vector *b);
 int norm(double *result, const vector *a);
 int unitvec(vector *u, const vector *v);
+int transmat(matrix *transpose, const matrix *mat);
+int madd(matrix *result, const matrix *a, const matrix *b);
+int msubs(matrix *result, const matrix *a, const matrix *b);
 vector vcreate(int n);
 matrix mcreate(int m, int n);
 
